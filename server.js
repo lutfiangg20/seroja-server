@@ -244,7 +244,7 @@ app.post("/laporan", verifyToken, async (req, res) => {
 app.post("/update/stok", verifyToken, async (req, res) => {
   try {
     // Create a document to insert
-    const { nama_barang, qty, _id } = req.body;
+    const { nama_barang, qty } = req.body;
     const collection = db.collection("barang");
     const result = await collection.updateMany(
       { nama_barang: nama_barang },
