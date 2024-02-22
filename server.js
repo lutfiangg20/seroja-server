@@ -25,6 +25,7 @@ const client = new MongoClient(uri);
 // Get the database
 const db = client.db(dbName);
 // Get the collection
+const pelanggan = db.collection("pelanggan");
 const barang = db.collection("barang");
 const kategori = db.collection("kategori");
 const laporan = db.collection("laporan");
@@ -117,6 +118,31 @@ app.post("/barang", verifyToken, async (req, res) => {
     // Print the ID of the inserted document
     console.log(`A document was inserted with the _id: ${result.insertedId}`);
     return res.send("Barang berhasil disimpan");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+app.get("/pelanggan", verifyToken, async (req, res) => {
+  try {
+    // Find all documents
+    const result = await pelanggan.find({}).toArray();
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.post("/pelanggan", verifyToken, async (req, res) => {
+  try {
+    // Create a document to insert
+    const doc = req.body;
+    // Insert the defined document into the "haiku" collection
+    const result = await pelanggan.insertOne(doc);
+    // Print the ID of the inserted document
+    console.log(`A document was inserted with the _id: ${result.insertedId}`);
+    return res.send("Pelanggan berhasil ditambahkan");
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: error.message });
