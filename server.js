@@ -121,7 +121,12 @@ app.get("/barang", verifyToken, async (req, res) => {
 app.post("/barang", verifyToken, async (req, res) => {
   try {
     // Create a document to insert
-    const doc = req.body;
+    const doc = {
+      nama_barang: req.body.nama_barang,
+      kategori: req.body.kategori,
+      stok: parseInt(req.body.stok),
+      harga: req.body.harga,
+    };
     // Insert the defined document into the "haiku" collection
     const result = await barang.insertOne(doc);
     // Print the ID of the inserted document
@@ -284,7 +289,7 @@ app.post("/update/stok", verifyToken, async (req, res) => {
     req.body.map(async (item) => {
       await barang.updateOne(
         { nama_barang: item.nama_barang },
-        { $inc: { stok: -parse(item.stok) } }
+        { $inc: { stok: -parseInt(item.stok) } }
       );
     });
 
