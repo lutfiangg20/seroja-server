@@ -1,4 +1,5 @@
 const { MongoClient } = require("mongodb");
+const mongoose = require("mongoose");
 const express = require("express");
 const cors = require("cors");
 const cookieSession = require("cookie-session");
@@ -22,6 +23,14 @@ const uri = "mongodb://localhost:27017";
 const dbName = "seroja";
 
 const client = new MongoClient(uri);
+mongoose.connect(uri);
+
+const barangMongoose = mongoose.model("barang", {
+  nama_barang: String,
+  kategori: String,
+  stok: String,
+  harga: Number,
+});
 // Get the database
 const db = client.db(dbName);
 // Get the collection
@@ -252,12 +261,13 @@ app.post("/laporan", verifyToken, async (req, res) => {
   try {
     // Create a document to insert
     const data = req.body;
-    const dataWithCreatedAt = data.map((item) => ({
+    /* const dataWithCreatedAt = data.map((item) => ({
       ...item,
       created_at: createdAt,
-    }));
+    })); */
+    data.created_at = createdAt;
     // Insert the defined document into the "haiku" collection
-    const result = await laporan.insertMany(dataWithCreatedAt);
+    const result = await laporan.insertOne(data);
     // Print the ID of the inserted document
     console.log(`A document was inserted with the _id: ${result.insertedId}`);
     return res.send("Kategori berhasil disimpan");
@@ -270,12 +280,15 @@ app.post("/laporan", verifyToken, async (req, res) => {
 app.post("/update/stok", verifyToken, async (req, res) => {
   try {
     // Create a document to insert
-    const { nama_barang, qty } = req.body;
-    const collection = db.collection("barang");
-    const result = await collection.updateMany(
-      { nama_barang: nama_barang },
-      { $set: { stok: parseInt(qty) } }
-    );
+
+    req.body.map(async (item) => {
+      await barang.updateOne(
+        { nama_barang: item.nama_barang },
+        { $inc: { stok: -parse(item.stok) } }
+      );
+    });
+
+    return res.status(200).json({ message: "Stock updated successfully" });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: error.message });
