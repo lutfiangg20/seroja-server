@@ -6,6 +6,7 @@ const cookieSession = require("cookie-session");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const moment = require("moment");
 const app = express();
 
 app.use(cors());
@@ -39,7 +40,7 @@ const barang = db.collection("barang");
 const kategori = db.collection("kategori");
 const laporan = db.collection("laporan");
 const user = db.collection("user");
-const createdAt = new Date();
+const createdAt = moment().format("DD-MM-YYYY HH:mm:ss");
 
 async function connectToMongo() {
   try {
@@ -270,6 +271,7 @@ app.post("/laporan", verifyToken, async (req, res) => {
       ...item,
       created_at: createdAt,
     })); */
+    //created at datetime indonesia
     data.created_at = createdAt;
     // Insert the defined document into the "haiku" collection
     const result = await laporan.insertOne(data);
