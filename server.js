@@ -164,6 +164,29 @@ app.post("/pelanggan", verifyToken, async (req, res) => {
   }
 });
 
+app.delete("/pelanggan/:id", verifyToken, async (req, res) => {
+  try {
+    // Mendapatkan ID dari parameter URL
+    const id = req.params.id;
+
+    // Menghapus data dari MongoDB berdasarkan ID
+    const result = await pelanggan.deleteOne({
+      nama: req.params.id,
+    });
+
+    // Memeriksa apakah data berhasil dihapus
+    if (result.deletedCount === 1) {
+      res.status(200).send("Data deleted successfully");
+    } else {
+      res.status(404).send("Data not found");
+    }
+  } catch (err) {
+    // Menangani kesalahan
+    console.error("Error deleting data from MongoDB:", err.message);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 app.put("/barang/:id", verifyToken, (req, res) => {
   return res.send(
     `PUT HTTP method on product/${req.params.productId} resource`
