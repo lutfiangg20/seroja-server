@@ -187,10 +187,22 @@ app.delete("/pelanggan/:id", verifyToken, async (req, res) => {
   }
 });
 
-app.put("/barang/:id", verifyToken, (req, res) => {
-  return res.send(
-    `PUT HTTP method on product/${req.params.productId} resource`
+app.put("/barang/:id", verifyToken, async (req, res) => {
+  const id = req.params.id;
+  const { nama_barang, kategori, stok, harga } = req.body;
+  await barang.updateOne(
+    { nama_barang: id },
+    {
+      $set: {
+        nama_barang,
+        kategori,
+        stok,
+        harga,
+      },
+    }
   );
+  return res.send("Barang berhasil diupdate");
+  console.log(`PUT HTTP method on product/${req.params.productId} resource`);
 });
 
 app.delete("/barang/:id", verifyToken, async (req, res) => {
