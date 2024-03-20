@@ -126,7 +126,7 @@ app.post("/barang", verifyToken, async (req, res) => {
       nama_barang: req.body.nama_barang,
       kategori: req.body.kategori,
       stok: parseInt(req.body.stok),
-      harga: req.body.harga,
+      harga: parseInt(req.body.harga),
     };
     // Insert the defined document into the "haiku" collection
     const result = await barang.insertOne(doc);
@@ -196,7 +196,7 @@ app.put("/barang/:id", verifyToken, async (req, res) => {
       $set: {
         nama_barang,
         kategori,
-        stok,
+        stok: parseInt(stok),
         harga,
       },
     }
