@@ -53,7 +53,9 @@ async function connectToMongo() {
 }
 connectToMongo();
 
-app.post("/register", async (req, res) => {
+app.use(express.static("dist"));
+
+app.post("/api/register", async (req, res) => {
   try {
     const { username, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -84,7 +86,7 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-app.post("/login", async (req, res) => {
+app.post("/api/login", async (req, res) => {
   try {
     const { username, password } = req.body;
     const usercek = await user.findOne({ username: username });
@@ -102,14 +104,14 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/logout", (req, res) => {
+app.post("/api/logout", (req, res) => {
   // Clear the JWT token stored on the client-side (e.g., localStorage)
   // You may also want to handle clearing cookies if you're using them
   res.clearCookie("jwt_token"); // Example for clearing cookies
   res.status(200).json({ message: "Logout successful" });
 });
 
-app.get("/barang", verifyToken, async (req, res) => {
+app.get("/api/barang", verifyToken, async (req, res) => {
   try {
     // Find all documents
     const result = await barang.find({}).toArray();
@@ -119,7 +121,7 @@ app.get("/barang", verifyToken, async (req, res) => {
   }
 });
 
-app.post("/barang", verifyToken, async (req, res) => {
+app.post("/api/barang", verifyToken, async (req, res) => {
   try {
     // Create a document to insert
     const doc = {
@@ -139,7 +141,7 @@ app.post("/barang", verifyToken, async (req, res) => {
   }
 });
 
-app.get("/pelanggan", verifyToken, async (req, res) => {
+app.get("/api/pelanggan", verifyToken, async (req, res) => {
   try {
     // Find all documents
     const result = await pelanggan.find({}).toArray();
@@ -149,7 +151,7 @@ app.get("/pelanggan", verifyToken, async (req, res) => {
   }
 });
 
-app.post("/pelanggan", verifyToken, async (req, res) => {
+app.post("/api/pelanggan", verifyToken, async (req, res) => {
   try {
     // Create a document to insert
     const doc = req.body;
@@ -164,7 +166,7 @@ app.post("/pelanggan", verifyToken, async (req, res) => {
   }
 });
 
-app.delete("/pelanggan/:id", verifyToken, async (req, res) => {
+app.delete("/api/pelanggan/:id", verifyToken, async (req, res) => {
   try {
     // Mendapatkan ID dari parameter URL
     const id = req.params.id;
@@ -187,9 +189,10 @@ app.delete("/pelanggan/:id", verifyToken, async (req, res) => {
   }
 });
 
-app.put("/barang/:id", verifyToken, async (req, res) => {
+app.put("/api/barang/:id", verifyToken, async (req, res) => {
   const id = req.params.id;
   const { nama_barang, kategori, stok, harga } = req.body;
+  console.log("put id:", req.params.id);
   await barang.updateOne(
     { nama_barang: id },
     {
@@ -205,14 +208,14 @@ app.put("/barang/:id", verifyToken, async (req, res) => {
   console.log(`PUT HTTP method on product/${req.params.productId} resource`);
 });
 
-app.delete("/barang/:id", verifyToken, async (req, res) => {
+app.delete("/api/barang/:id", verifyToken, async (req, res) => {
   try {
     // Mendapatkan ID dari parameter URL
     const id = req.params.id;
 
     // Menghapus data dari MongoDB berdasarkan ID
     const result = await barang.deleteOne({
-      nama_barang: req.params.id,
+      nama_barang: id,
     });
 
     // Memeriksa apakah data berhasil dihapus
@@ -231,7 +234,7 @@ app.delete("/barang/:id", verifyToken, async (req, res) => {
   ); */
 });
 
-app.get("/kategori", verifyToken, async (req, res) => {
+app.get("/api/kategori", verifyToken, async (req, res) => {
   try {
     // Find all documents
     const result = await kategori.find({}).toArray();
@@ -247,7 +250,7 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-app.post("/kategori", verifyToken, async (req, res) => {
+app.post("/api/kategori", verifyToken, async (req, res) => {
   try {
     // Create a document to insert
     const doc = req.body;
@@ -262,7 +265,7 @@ app.post("/kategori", verifyToken, async (req, res) => {
   }
 });
 
-app.delete("/kategori/:id", verifyToken, async (req, res) => {
+app.delete("/api/kategori/:id", verifyToken, async (req, res) => {
   try {
     // Mendapatkan ID dari parameter URL
     const id = req.params.id;
@@ -288,7 +291,7 @@ app.delete("/kategori/:id", verifyToken, async (req, res) => {
     ); */
 });
 
-app.get("/laporan", verifyToken, async (req, res) => {
+app.get("/api/laporan", verifyToken, async (req, res) => {
   try {
     // Find all documents
     const result = await laporan.find({}).toArray();
@@ -298,7 +301,7 @@ app.get("/laporan", verifyToken, async (req, res) => {
   }
 });
 
-app.post("/laporan", verifyToken, async (req, res) => {
+app.post("/api/laporan", verifyToken, async (req, res) => {
   try {
     // Create a document to insert
     const data = req.body;
@@ -319,7 +322,7 @@ app.post("/laporan", verifyToken, async (req, res) => {
   }
 });
 
-app.post("/update/stok", verifyToken, async (req, res) => {
+app.post("/api/update/stok", verifyToken, async (req, res) => {
   try {
     // Create a document to insert
 
